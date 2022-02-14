@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>API Filter</title>
+    </head>
+    <body>
+      <div class="d-flex justify-content-center">
+        <div class="bg-white w-50 rounded-lg border d-flex justify-content-center mt-3">
+          <form class="pt-3 w-75" onsubmit="submitForm(event)">
+            <div class="form-group">
+              <label>City</label>
+              <select id="cityInput" class="form-control">
+                <option>London</option>
+                <option>Manchester</option>
+                <option>Birmingham</option>
+                <option>Liverpool</option>
+                <option>Sheffield</option>
+              </select>
+            </div>
+            <div  class="form-group">
+              <label>Distance</label>
+              <select id="distanceInput" class="form-control">
+                <option>25</option>
+                <option>50</option>
+                <option>100</option>
+                <option>200</option>
+              </select>
+            </div>
+            <button class="btn btn-primary mb-2">Get results</button>
+          </form>
+        </div>
+      </div>
+      <div id="results" class="d-flex justify-content-center">
+      </div>
+      <script>
+        async function submitForm(e) {
+          e.preventDefault()
+          const results = document.getElementById('results')
+          const location = document.getElementById("cityInput").value
+          const distance = document.getElementById("distanceInput").value
+          
+          if (!location || !distance) {
+            return
+          }
+
+          const response = await fetch(`http://localhost:3000/filter?city=${location}&distance=${distance}`);
+          const data = await response.json()
+
+          while(results.firstChild) {
+            results.removeChild(results.firstChild)
+          }
+          const table = document.createElement("table");
+
+          const tableStyling = ['table', 'mt-3', 'border', 'w-75', 'rounded-lg']
+          table.classList.add(...tableStyling)
+          for (var i in data) {
+            const tr = table.insertRow();
+
+            const cell1 = tr.insertCell()
+            const p1 = document.createElement('p')
+            p1.innerText = data[i].first_name
+            cell1.appendChild(p1);
+
+            const cell2 = tr.insertCell()
+            const p2 = document.createElement('p')
+            p2.innerText = data[i].last_name
+            cell2.appendChild(p2);
+
+            const cell3 = tr.insertCell()
+            const p3 = document.createElement('p')
+            p3.innerText = data[i].email
+            cell3.appendChild(p3);
+          }
+          results.appendChild(table)
+        }
+      </script>
+    </body>
+</html>
